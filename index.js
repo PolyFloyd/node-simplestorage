@@ -9,9 +9,8 @@ var path   = require('path');
 var mkdirp = require('mkdirp');
 
 var SimpleStorage = module.exports = function(name, options, callback) {
-  if (typeof options  === 'function') { callback = options; }
-  if (typeof options  !== 'object')   { options  = {}; }
-  if (typeof callback !== 'function') { callback = exports.defaultCallback; }
+  if (typeof options === 'function') { callback = options; }
+  if (typeof options !== 'object')   { options  = {}; }
 
   options.directory = options.directory || './storage';
   options.filemode  = options.filemode  || (6<<6 | 4<<3 | 4);
@@ -25,16 +24,14 @@ var SimpleStorage = module.exports = function(name, options, callback) {
     return options.filemode;
   };
 
-  var storage = this;
-  var cb = function(err) {
-    if (callback) {
-      callback(err, storage);
-    } else {
-      exports.defaultCallback(err);
-    }
-  };
-
   if (callback) {
+    var cb = function(err) {
+      if (options.interval > 0) {
+        this.$start(options.interval);
+      }
+      callback(err, this);
+    };
+    var storage = this;
     fs.exists(storage.$file(), function(exists) {
       if (exists) {
         storage.$read(cb);
@@ -42,53 +39,50 @@ var SimpleStorage = module.exports = function(name, options, callback) {
         storage.$flush(cb);
       }
     });
-    this.$start(options.interval);
+
   } else {
-    if (fs.existsSync(storage.$file())) {
-      storage.$readSync();
+    if (fs.existsSync(this.$file())) {
+      this.$read();
     } else {
-      storage.$flushSync();
+      this.$flush();
     }
     this.$start(options.interval);
   }
 };
 
 SimpleStorage.prototype.$flush = function(callback) {
-  var storage = this;
-  callback = callback || exports.defaultCallback;
-  fs.writeFile(this.$file(), JSON.stringify(this), {
-    mode: storage.$filemode()
-  }, callback);
-};
+  if (callback) {
+    var storage = this;
+    fs.writeFile(this.$file(), JSON.stringify(this), {
+      mode: storage.$filemode()
+    }, callback);
 
-SimpleStorage.prototype.$flushSync = function(callback) {
-  var err = fs.writeFileSync(this.$file(), JSON.stringify(this), {
-    mode: this.$filemode()
-  });
-  (callback || exports.defaultCallback)(err);
+  } else {
+    fs.writeFileSync(this.$file(), JSON.stringify(this), {
+      mode: this.$filemode()
+    });
+  }
 };
 
 SimpleStorage.prototype.$read = function(callback) {
-  var storage = this;
-  callback = callback || exports.defaultCallback;
-  fs.readFile(this.$file(), function(err, data) {
-    if (!err) {
-      var newData = JSON.parse(data);
-      for (var key in newData) {
-        storage[key] = newData[key];
+  if (callback) {
+    var storage = this;
+    fs.readFile(this.$file(), function(err, data) {
+      if (!err) {
+        var newData = JSON.parse(data);
+        for (var key in newData) {
+          storage[key] = newData[key];
+        }
       }
-    }
-    callback(err);
-  });
-};
+      callback(err);
+    });
 
-SimpleStorage.prototype.$readSync = function(callback) {
-  var data = fs.readFileSync(this.$file());
-  var newData = JSON.parse(data);
-  for (var key in newData) {
-    this[key] = newData[key];
+  } else {
+    var data = JSON.parse(fs.readFileSync(this.$file()));
+    for (var key in data) {
+      this[key] = data[key];
+    }
   }
-  (callback || exports.defaultCallback)(null);
 };
 
 SimpleStorage.prototype.$start = function(interval) {
@@ -106,8 +100,4 @@ SimpleStorage.prototype.$start = function(interval) {
 SimpleStorage.prototype.$stop = function() {
   clearInterval(this.$intervalID());
   delete this.$intervalID;
-};
-
-exports.defaultCallback = function(err) {
-  if (err) throw err;
 };
