@@ -1,0 +1,20 @@
+{
+  "name": "simplestorage",
+  "version": "1.0.0",
+  "description": "Disk backed objects. Super simple stuff.",
+  "keywords": ["storage", "persistence", "disk", "save"],
+  "license": "MIT",
+  "private": false,
+  "author": {
+    "name": "PolyFloyd",
+    "email": "floyd@polyfloyd.net",
+    "url": "http://polyfloyd.net/"
+  },
+  "dependencies": {
+    "mkdirp": "*"
+  },
+  "repository" : {
+    "type": "git",
+    "url":  "https://github.com/PolyFloyd/node-simplestorage.git"
+  }
+}
