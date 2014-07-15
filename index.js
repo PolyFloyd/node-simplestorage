@@ -11,6 +11,7 @@ var mkdirp = require('mkdirp');
 var SimpleStorage = module.exports = function(name, options, callback) {
   if (typeof options === 'function') { callback = options; }
   if (typeof options !== 'object')   { options  = {}; }
+  options.name = name;
 
   for (var k in SimpleStorage.defaults) {
     if (typeof options[k] === 'undefined') {
@@ -62,7 +63,7 @@ SimpleStorage.defaults = {
 };
 
 SimpleStorage.prototype.$file = function() {
-  return path.join(this.$options().directory, name+'.json');
+  return path.join(this.$options().directory, this.$options().name+'.json');
 };
 
 SimpleStorage.prototype.$flush = function(callback) {
