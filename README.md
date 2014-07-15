@@ -36,6 +36,8 @@ An object containing the default options used when constructing a new instance.
  *  interval `number` = 10 minutes
     If an interval of 0 is specified, disk synchonization will not be started automatically.
     The interval is specified in seconds.
+ *  pretty `boolean` = `NODE_ENV == 'development'`
+    Causes the contents of the associated file to be indented by a tab when set to true.
 
 ### SimpleStorage(name \[, options\] \[, callback\])
 

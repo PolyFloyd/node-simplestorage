@@ -20,12 +20,9 @@ var SimpleStorage = module.exports = function(name, options, callback) {
 
   mkdirp.sync(options.directory);
 
-  this.$file = function() {
-    return path.join(options.directory, name+'.json');
-  };
-  this.$filemode = function() {
-    return options.filemode;
-  };
+  this.$options = function() {
+    return options;
+  }
 
   if (callback) {
     var cb = function(err) {
@@ -59,18 +56,24 @@ SimpleStorage.defaults = {
   directory: './storage',
   filemode:  6<<6 | 4<<3 | 4,
   interval:  10 * 60,
+  pretty:    process.env.NODE_ENV === 'development',
+};
+
+SimpleStorage.$file = function() {
+  return path.join(this.$options().directory, name+'.json');
 };
 
 SimpleStorage.prototype.$flush = function(callback) {
+  var space = this.$options().pretty ? '\t' : null;
   if (callback) {
     var storage = this;
-    fs.writeFile(this.$file(), JSON.stringify(this), {
-      mode: storage.$filemode()
+    fs.writeFile(this.$file(), JSON.stringify(this, null, space), {
+      mode: storage.$options().filemode,
     }, callback);
 
   } else {
-    fs.writeFileSync(this.$file(), JSON.stringify(this), {
-      mode: this.$filemode()
+    fs.writeFileSync(this.$file(), JSON.stringify(this, null, space), {
+      mode: this.$options().filemode,
     });
   }
 };
