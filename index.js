@@ -57,6 +57,8 @@ SimpleStorage.defaults = {
   filemode:  6<<6 | 4<<3 | 4,
   interval:  10 * 60,
   pretty:    process.env.NODE_ENV === 'development',
+  replacer:  null,
+  reviver:   null,
 };
 
 SimpleStorage.$file = function() {
@@ -65,14 +67,15 @@ SimpleStorage.$file = function() {
 
 SimpleStorage.prototype.$flush = function(callback) {
   var space = this.$options().pretty ? '\t' : null;
+  var string = JSON.stringify(this, this.$options().replacer, space);
   if (callback) {
     var storage = this;
-    fs.writeFile(this.$file(), JSON.stringify(this, null, space), {
+    fs.writeFile(this.$file(), string, {
       mode: storage.$options().filemode,
     }, callback);
 
   } else {
-    fs.writeFileSync(this.$file(), JSON.stringify(this, null, space), {
+    fs.writeFileSync(this.$file(), string, {
       mode: this.$options().filemode,
     });
   }
@@ -83,7 +86,7 @@ SimpleStorage.prototype.$read = function(callback) {
     var storage = this;
     fs.readFile(this.$file(), function(err, data) {
       if (!err) {
-        var newData = JSON.parse(data);
+        var newData = JSON.parse(data, this.$options().reviver);
         for (var key in newData) {
           storage[key] = newData[key];
         }
@@ -92,7 +95,7 @@ SimpleStorage.prototype.$read = function(callback) {
     });
 
   } else {
-    var data = JSON.parse(fs.readFileSync(this.$file()));
+    var data = JSON.parse(fs.readFileSync(this.$file()), this.$options().reviver);
     for (var key in data) {
       this[key] = data[key];
     }

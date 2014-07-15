@@ -38,6 +38,10 @@ An object containing the default options used when constructing a new instance.
     The interval is specified in seconds.
  *  pretty `boolean` = `NODE_ENV == 'development'`
     Causes the contents of the associated file to be indented by a tab when set to true.
+ *  replacer `function(k, v)` = null
+    Used by `JSON.stringify()` to serialize individual properties ([MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_native_JSON#The_replacer_parameter)).
+ *  reviver `function(k, v)` = null
+    Used by `JSON.parse()` to deserialize individual properties ([MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse#Example.3A_Using_the_reviver_parameter)).
 
 ### SimpleStorage(name \[, options\] \[, callback\])
 
