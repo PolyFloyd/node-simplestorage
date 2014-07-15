@@ -49,7 +49,9 @@ var SimpleStorage = module.exports = function(name, options, callback) {
     } else {
       this.$flush();
     }
-    this.$start(options.interval);
+    if (options.interval > 0) {
+      this.$start(options.interval);
+    }
   }
 };
 
