@@ -1,6 +1,6 @@
 {
   "name": "simplestorage",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Disk backed objects. Super simple stuff.",
   "keywords": ["storage", "persistence", "disk", "save"],
   "license": "MIT",

@@ -61,7 +61,7 @@ SimpleStorage.defaults = {
   reviver:   null,
 };
 
-SimpleStorage.$file = function() {
+SimpleStorage.prototype.$file = function() {
   return path.join(this.$options().directory, name+'.json');
 };
 
