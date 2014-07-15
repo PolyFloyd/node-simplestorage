@@ -12,9 +12,12 @@ var SimpleStorage = module.exports = function(name, options, callback) {
   if (typeof options === 'function') { callback = options; }
   if (typeof options !== 'object')   { options  = {}; }
 
-  options.directory = options.directory || './storage';
-  options.filemode  = options.filemode  || (6<<6 | 4<<3 | 4);
-  options.interval  = options.interval  || (10 * 60);
+  for (var k in SimpleStorage.defaults) {
+    if (typeof options[k] === 'undefined') {
+      options[k] = SimpleStorage.defaults[k];
+    }
+  }
+
   mkdirp.sync(options.directory);
 
   this.$file = function() {
@@ -48,6 +51,12 @@ var SimpleStorage = module.exports = function(name, options, callback) {
     }
     this.$start(options.interval);
   }
+};
+
+SimpleStorage.defaults = {
+  directory: './storage',
+  filemode:  6<<6 | 4<<3 | 4,
+  interval:  10 * 60,
 };
 
 SimpleStorage.prototype.$flush = function(callback) {

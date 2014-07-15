@@ -27,20 +27,26 @@ importantThings.groceries = [
 
 ## Documentation
 
+### SimpleStorage.defaults
+
+An object containing the default options used when constructing a new instance.
+
+ *  directory `string` = './storage'
+ *  filemode `number` = 0644
+ *  interval `number` = 10 minutes
+    If an interval of 0 is specified, disk synchonization will not be started automatically.
+    The interval is specified in seconds.
+
 ### SimpleStorage(name \[, options\] \[, callback\])
 
  *  name `string`
  *  options `object`
-     *  directory `string` default = './storage'
-     *  filemode `number` default = 0644
-     *  interval `number` default = 10 minutes
+    Please refer to [SimpleStorage.defaults](#simplestoragedefaults) for a list of all available options.
  *  callback `function(Error, SimpleStorage)`
 
 This function constructs a new SimpleStorage object.
-If an interval of 0 is specified in options, disk synchonization will not be started automatically.
 Any property added to an instance of this object will be flushed to disk.
 If no callback is specified, this function will run synchronous.
-
 
 ### SimpleStorage.$flush(\[callback\])
 
